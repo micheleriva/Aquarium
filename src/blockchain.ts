@@ -11,9 +11,20 @@ export interface Block {
   hash:         string;
 }
 
+/**
+ * @function calculateHash
+ * @param {Block} a block of the BlockChain
+ * @returns {string} Returns the hash fo the block.
+ */
+
 export function calculateHash({index, previousHash, timestamp, data}: Block): string {
   return SHA256(index + previousHash + timestamp + JSON.stringify(data)).toString();
 }
+
+/**
+ * @function generateGenesisBlock
+ * @returns {Block} returns the first block of the BlockChain
+ */
 
 export function generateGenesisBlock(): Block {
 
@@ -30,9 +41,22 @@ export function generateGenesisBlock(): Block {
   }
 }
 
+/**
+ * @function getLatestBlock
+ * @param {BlockChain} chain
+ * @returns {Block} Returns the latest block of the BlockChain
+ */
+
 export function getLatestBlock(chain: BlockChain): Block {
   return chain[chain.length - 1];
 }
+
+/**
+ * @function addBlock
+ * @param {BlockChain} chain
+ * @param {Block} block new block to add to the BlockChain
+ * @returns {BlockChain} Returns a new BlockChain with the newly added block.
+ */
 
 export function addBlock(chain: BlockChain, {timestamp, data}: Block): BlockChain {
   const latestBlock:   Block = getLatestBlock(chain);
