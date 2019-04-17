@@ -5,7 +5,7 @@ export class Block {
   index:        number;
   previousHash: string;
   timestamp:    Date;
-  data:         any;
+  data:         string;
   hash:         string;
   nonce:        number;
 
@@ -68,8 +68,8 @@ export default class Blockchain {
     const latestBlock: Block = this.getLatestBlock();
 
     block.previousHash = latestBlock.hash;
-    block.hash         = block.calculateHash();
     block.index        = latestBlock.index + 1;
+    block.hash         = block.calculateHash();
     this.chain.push(block);
     return;
   }
