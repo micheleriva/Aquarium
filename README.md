@@ -15,8 +15,17 @@
 <br />
 
 <p>
-  <b>Aquarium</b> is a simple and academic blockchain implementation. Not ready in any way to be used in production, it has been made for research purposes.
+  <b>Aquarium</b> is a functional, simple and academic blockchain implementation. Not ready in any way to be used in production. <br /> 
+  Aquarium has been made for research purposes.
 </p>
+
+# Concept
+Aquarius is a functional blockchain implementation. <br />
+Works in Node.js and [Graal VM](https://www.graalvm.org/) and takes advantage of multicore computation in order to mine new coins and give proof of work. <br />
+It's extremely easy to parallelize and to distribute due to its functional and immutable structure. <br />
+Performance is not a goal for this project: recursion always uses **tail call elimination** in order to handle memory in a safe way.
+
+Still a big work in progress!
 
 # License
 [The Unlicense](/LICENSE.md)
