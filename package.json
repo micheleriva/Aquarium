@@ -7,18 +7,25 @@
   "license": "The Unlicense",
   "private": false,
   "scripts": {
-    "dev":   "tsc -w",
+    "dev": "tsc -w",
     "build": "tsc",
-    "test":  "jest --coverage"
+    "test": "jest --coverage"
   },
   "dependencies": {
-    "crypto-js": "3.1.9-1"
+    "crypto-js": "3.1.9-1",
+    "dayjs": "^1.8.12",
+    "koa": "2.7.0",
+    "koa-bodyparser": "4.2.1",
+    "ws": "6.2.1"
   },
   "devDependencies": {
     "@types/crypto-js": "3.1.43",
     "@types/jest": "24.0.11",
-    "ts-jest": "24.0.2",
+    "@types/koa": "2.0.48",
+    "@types/koa-bodyparser": "4.2.2",
+    "@types/ws": "6.0.1",
     "jest": "23.1.0",
+    "ts-jest": "24.0.2",
     "typescript": "3.1.1"
   }
 }

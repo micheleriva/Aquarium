@@ -1,123 +1,75 @@
-import SHA256 from 'crypto-js/sha256';
+import SHA256 from "crypto-js/sha256";
+import dayjs  from "dayjs";
 
-export class Block {
+type BlockChain = Block[];
 
+export interface Block {
   index:        number;
+  timestamp:    string;
+  data:         any;
   previousHash: string;
-  timestamp:    Date;
-  data:         string;
   hash:         string;
-  nonce:        number;
-
-  constructor({timestamp, data}: Block) {
-    this.index        = 0;
-    this.previousHash = "0";
-    this.timestamp    = timestamp;
-    this.data         = data;
-    this.hash         = this.calculateHash();
-    this.nonce        = 0;
-  }
-
-  /**
-   * @method mineBlock
-   * @param {number} difficulty
-   * @todo to be implemented
-   */
-
-  public mineBlock(difficulty: number): any {
-    return void 0;
-  }
-
-  /**
-   * @method calculateHash
-   * @returns {string} a computed hash of our Block
-   */
-
-  public calculateHash(): string {
-    return SHA256(this.index + this.previousHash + this.timestamp + this.data).toString();
-  }
-
 }
 
-export default class Blockchain {
+export function calculateHash({index, previousHash, timestamp, data}: Block): string {
+  return SHA256(index + previousHash + timestamp + JSON.stringify(data)).toString();
+}
 
-  chain: Block[];
+export function generateGenesisBlock(): Block {
 
-  constructor() {
-    this.chain = [this.createGenesis()];
+  const block: any = {
+    index:        0, 
+    timestamp:    "/",
+    data:         "Genesis Block",
+    previousHash: "0",
+  };
+
+  return {
+    ...block,
+    hash: calculateHash(block)
   }
+}
 
-  /**
-   * @method getLatestBlock
-   * @returns {Block} the latest block of our blockchain
-   */
+export function getLatestBlock(chain: BlockChain): Block {
+  return chain[chain.length - 1];
+}
 
-  public getLatestBlock(): Block {
-    return this.chain[this.chain.length - 1];
-  }
+export function addBlock(chain: BlockChain, {timestamp, data}: Block): BlockChain {
+  const latestBlock:   Block = getLatestBlock(chain);
+  const previousHash: string = latestBlock.hash;
+  const index:        number = latestBlock.index + 1;
+  const block:           any = { index, timestamp, data, previousHash }
+  const newBlock:        any = { ...block, hash: calculateHash(block) }
 
+  return chain.concat(newBlock);
+}
 
-  /**
-   * @method addBlock
-   * @param {Block} block a new block to be added to our blockchain
-   * @returns {void}
-   */
+/**
+ * @function validateChain
+ * @param {BlockChain} chain
+ * @returns {boolean} Returns `true` when the blockchain is valid
+ * @description Uses tail call elimination in order to handle memory safe recursion.
+ */
 
-  public addBlock(block: Block): void {
+export function validateChain(chain: BlockChain): boolean {
 
-    const latestBlock: Block = this.getLatestBlock();
+  function tce(chain: BlockChain, index: number): boolean {
 
-    block.previousHash = latestBlock.hash;
-    block.index        = latestBlock.index + 1;
-    block.hash         = block.calculateHash();
-    this.chain.push(block);
-    return;
-  }
+    if (index === 0) return true;
 
-  /**
-   * @method validate
-   * @returns {boolean} returns true if our blockchain is valid
-   */
+    const { hash, ...currentBlockWithoutHash }: any   = chain[index];
+    const currentBlock:                         Block = chain[index];
+    const previousBlock:                        Block = chain[index - 1];
 
-  public validate(): boolean {
+    const isValidHash:         boolean  = (hash === calculateHash(currentBlockWithoutHash));
+    const isPreviousHashValid: boolean  = (currentBlock.previousHash === previousBlock.hash);
+    const isValidChain:        boolean  = (isValidHash && isPreviousHashValid);
 
-    let i: number = 1;
+    if (!isValidChain) return false;
 
-    while(i < this.chain.length) {
-
-      const currentBlock:  Block = this.chain[i];
-      const previousBlock: Block = this.chain[i - 1];
-
-      if (currentBlock.hash !== currentBlock.calculateHash()) {
-        return false;
-      }
-
-      if (currentBlock.previousHash !== previousBlock.hash) {
-        return false;
-      }
-
-      i++;
-    }
-
-    return true;
+    return tce(chain, index -1);
 
   }
 
-  /**
-   * @method createGenesis
-   * @returns {block} Returns the genesis block of our blockchain
-   */
-
-  private createGenesis(): Block {
-
-    const genesisBlock: any = {
-      index:        0,
-      timestamp:    new Date(),
-      data:         "Genesis Block",
-      previousHash: "0"
-    }
-
-    return new Block(genesisBlock);
-  }
-
+  return tce(chain, chain.length - 1)
 }
