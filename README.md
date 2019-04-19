@@ -23,9 +23,9 @@
 Aquarius is a functional blockchain implementation. <br />
 Works in Node.js (and possibly on the browser) and takes advantage of multicore computation in order to mine new coins and give proof of work. <br />
 It's extremely easy to parallelize and to distribute due to its functional and immutable structure. <br />
-Performance is not a goal for this project: recursion always uses **tail call elimination** in order to handle memory in a safe way.
+Performance is not a goal for this project: recursion always uses **trampolines** or **tail call elimination** in order to handle memory in a safe way.
 
-**P2P** connection will be granted using websockets, so it will be easy to distribute the Aquarium blockchain to different clients. <br />
+**P2P** connection will be granted using websockets, so it will be easy to distribute the Aquarium blockchain on both clients and servers. <br />
 A **REST** interface will also be granted thanks to Koa. 
 
 Still a big work in progress!

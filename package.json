@@ -1,14 +1,14 @@
 {
   "name": "acquarium",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple blockchain implementation",
   "main": "./src/main.js",
   "author": "Michele Riva <ciao@micheleriva.it>",
   "license": "The Unlicense",
   "private": false,
   "scripts": {
-    "dev": "tsc -w",
-    "build": "tsc",
+    "dev": "rm -rf ./dist && tsc -w",
+    "build": "rm -rf ./dist && tsc",
     "test": "jest --coverage"
   },
   "dependencies": {
