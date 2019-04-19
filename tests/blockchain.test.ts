@@ -17,8 +17,8 @@ test("Testing 'calculateHash' function", () => {
     previousHash: "a78dfhej12ihd9gas97hf0ajspdohg3d79qhs",
   }
 
-  expect(BlockChain.calculateHash(block1)).toBe("164854d77c5c269ce7dfd94d60a150167c72fcc1a0103e809bdf4a957b608677");
-  expect(BlockChain.calculateHash(block2)).toBe("fa20ea32aa1823014570b8f4177b14938a3219e2d89f1475eaae81b9c4520e0b");
+  expect(BlockChain.calculateHash(block1)).toBe("4cbff86a7b4028eae0bb3ee92455001163e216f4167580894f6e980fa7fc774c");
+  expect(BlockChain.calculateHash(block2)).toBe("e666ae1d71ac5ab261fa8bb04265d82e5f55649bd793c183fa75e1d7790dd8be");
 
 });
 

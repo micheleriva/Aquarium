@@ -1,14 +1,16 @@
-import SHA256 from "crypto-js/sha256";
-import dayjs  from "dayjs";
+import SHA256         from "crypto-js/sha256";
+import { trampoline } from "./utils";
 
 type BlockChain = Block[];
+type Hash       = string;
 
 export interface Block {
   index:        number;
   timestamp:    string;
   data:         any;
-  previousHash: string;
-  hash:         string;
+  previousHash: Hash;
+  hash:         Hash;
+  nonce:        number;
 }
 
 /**
@@ -17,8 +19,8 @@ export interface Block {
  * @returns {string} Returns the hash fo the block.
  */
 
-export function calculateHash({index, previousHash, timestamp, data}: Block): string {
-  return SHA256(index + previousHash + timestamp + JSON.stringify(data)).toString();
+export function calculateHash({index, previousHash, timestamp, data, nonce}: Block): string {
+  return SHA256(index + previousHash + timestamp + JSON.stringify(data) +  nonce).toString();
 }
 
 /**
@@ -30,7 +32,7 @@ export function generateGenesisBlock(): Block {
 
   const block: any = {
     index:        0, 
-    timestamp:    "/",
+    timestamp:    "",
     data:         "Genesis Block",
     previousHash: "0",
   };
@@ -62,10 +64,61 @@ export function addBlock(chain: BlockChain, {timestamp, data}: Block): BlockChai
   const latestBlock:   Block = getLatestBlock(chain);
   const previousHash: string = latestBlock.hash;
   const index:        number = latestBlock.index + 1;
-  const block:           any = { index, timestamp, data, previousHash }
-  const newBlock:        any = { ...block, hash: calculateHash(block) }
+  const block:           any = { index, timestamp, data, previousHash, nonce: 0 }
+  const newBlock:        any = mineBlock(4, block);
 
   return chain.concat(newBlock);
+}
+
+/**
+ * @function checkDifficulty
+ * @param {number} difficulty
+ * @param {string} hash
+ * @returns {boolean}
+ */
+
+export function checkDifficulty(difficulty: number, hash: string): boolean {
+  return hash.substr(0, difficulty) === "0".repeat(difficulty)
+}
+
+/**
+ * @function nextNonce
+ * @param {Block} block
+ * @returns {Block}
+ */
+
+export function nextNonce(block: Block): Block {
+  return updateHash({ ...block, nonce: block.nonce + 1 })
+}
+
+/**
+ * @function updateHash
+ * @param {Block} block
+ * @returns {Block}
+ */
+
+function updateHash(block: Block): Block {
+  return { ...block, hash: calculateHash(block) }
+}
+
+/**
+ * @function mineBlock
+ * @param {number} difficulty
+ * @param {Block} block
+ * @returns {Block} the mined block
+ */
+
+export function mineBlock(difficulty: number, block: Block): Block {
+
+  function mine(block: Block): any {
+    const newBlock: Block = nextNonce(block);
+
+    return checkDifficulty(difficulty, newBlock.hash)
+                ? newBlock
+                : () => mine(nextNonce(block));
+  }
+
+  return trampoline(mine(nextNonce(block)));
 }
 
 /**
