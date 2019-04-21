@@ -5,7 +5,6 @@ type BlockChain = Block[];
 type Hash       = string;
 
 export interface Block {
-  index:        number;
   timestamp:    string;
   data:         any;
   previousHash: Hash;
@@ -19,8 +18,8 @@ export interface Block {
  * @returns {string} Returns the hash fo the block.
  */
 
-export function calculateHash({index, previousHash, timestamp, data, nonce}: Block): string {
-  return SHA256(index + previousHash + timestamp + JSON.stringify(data) +  nonce).toString();
+export function calculateHash({previousHash, timestamp, data, nonce}: Block): string {
+  return SHA256(previousHash + timestamp + JSON.stringify(data) +  nonce).toString();
 }
 
 /**
@@ -31,7 +30,6 @@ export function calculateHash({index, previousHash, timestamp, data, nonce}: Blo
 export function generateGenesisBlock(): Block {
 
   const block: any = {
-    index:        0, 
     timestamp:    "",
     data:         "Genesis Block",
     previousHash: "0",
@@ -63,8 +61,7 @@ export function getLatestBlock(chain: BlockChain): Block {
 export function addBlock(chain: BlockChain, {timestamp, data}: Block): BlockChain {
   const latestBlock:   Block = getLatestBlock(chain);
   const previousHash: string = latestBlock.hash;
-  const index:        number = latestBlock.index + 1;
-  const block:           any = { index, timestamp, data, previousHash, nonce: 0 }
+  const block:           any = { timestamp, data, previousHash, nonce: 0 }
   const newBlock:        any = mineBlock(4, block);
 
   return chain.concat(newBlock);
